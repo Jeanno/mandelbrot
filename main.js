@@ -5,7 +5,7 @@ function mag(x, y) {
 
 function f(x0, y0) {
     // TODO: use high precision calculation
-    var max_i = 800;
+    var max_i = 600;
     var threshold = 100000;
     var x = 0;
     var y = 0;
@@ -30,7 +30,7 @@ class MandelbrotCanvas {
         this.ctx = this.canvas.getContext("2d");
         this.left = -2;
         this.top = 1;
-        this.scale = 0.5;
+        this.scale = 1;
         this.step = 2 / this.canvas.height * this.scale;
 
         this.ctx.scale(this.scale, this.scale);
@@ -44,10 +44,12 @@ class MandelbrotCanvas {
     }
 
     onClick(e) {
+        var scale = 1.5;
         // Reposition center to click
-        this.left += (e.offsetX - this.canvas.width / 2) * this.step / this.scale;
-        this.top -= (e.offsetY - this.canvas.height / 2) * this.step / this.scale;
-        this.step /= 1.5;
+        //
+        this.left += (e.offsetX - this.canvas.width / 2 / scale) * this.step;
+        this.top -= (e.offsetY - this.canvas.height / 2 / scale) * this.step;
+        this.step /= scale;
 
         this.drawSet();
         console.log(e);
@@ -63,7 +65,6 @@ class MandelbrotCanvas {
         this.ctx.fillStyle = "#010038";
         this.ctx.fillRect(0, 0, width, height);
         this.drawRows(0, height);
-        console.log(height);
     }
 
     drawRows(start, end) {
