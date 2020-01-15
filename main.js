@@ -3,14 +3,16 @@ function mag(x, y) {
     return x*x + y*y;
 }
 
+
+
+var MAX_ITERATION = 1000;
 function f(x0, y0) {
     // TODO: use high precision calculation
-    var max_i = 1000;
     var threshold = 100;
     var x = 0;
     var y = 0;
     
-    for (var i = 0; i < max_i; i++) {
+    for (var i = 0; i < MAX_ITERATION; i++) {
         var xsq = x * x;
         var ysq = y * y;
         if (xsq + ysq > threshold) {
@@ -28,10 +30,10 @@ class MandelbrotCanvas {
         this.canvasId = canvasId;
         this.canvas = document.getElementById(canvasId);
         this.ctx = this.canvas.getContext("2d");
-        this.left = -2;
-        this.top = 1;
+        this.left = -2.8;
+        this.top = 1.2;
         this.scale = 1;
-        this.step = 2 / this.canvas.height * this.scale;
+        this.step = 2.4 / this.canvas.height * this.scale;
 
         this.ctx.scale(this.scale, this.scale);
 
@@ -76,12 +78,16 @@ class MandelbrotCanvas {
             var iter = f(x, y);
             if (iter === -1) {
                 this.draw(i, j);
-            } else if (iter > 70) {
-                this.drawOuter1(i, j);
-            } else if (iter > 50) {
-                this.drawOuter2(i, j);
-            } else if (iter > 30) {
-                this.drawOuter3(i, j);
+            } else {
+                var denominator = 1000;
+                var frac_sq = Math.pow(iter, 1/2.5) / Math.pow(denominator, 1/2.5);
+                var frac = iter / denominator;
+                var h = 241.1 * (1 - frac_sq) + 37 * frac_sq;
+                var s = 100 * (1 - frac * (1 - frac));
+                var l = 100 * (0.1 + frac_sq) / 1.1;
+
+                this.ctx.fillStyle = 'hsl(' + h + ',' + s + '%,' + l + '%)';
+                this.ctx.fillRect(i, j, 1, 1);
             }
         }
 
@@ -100,21 +106,6 @@ class MandelbrotCanvas {
         this._timeout = setTimeout(function() {
             that.drawRows(nextRow, end);
         }, 1);
-    }
-
-    drawOuter3(x, y) {
-        this.ctx.fillStyle = "#537ec5";
-        this.ctx.fillRect(x, y, 1, 1);
-    }
-
-    drawOuter2(x, y) {
-        this.ctx.fillStyle = "#f39422";
-        this.ctx.fillRect(x, y, 1, 1);
-    }
-
-    drawOuter1(x, y) {
-        this.ctx.fillStyle = "#FFFFFF";
-        this.ctx.fillRect(x, y, 1, 1);
     }
 
     draw(x, y) {
