@@ -5,20 +5,20 @@ function mag(x, y) {
 
 function f(x0, y0) {
     // TODO: use high precision calculation
-    var max_i = 600;
-    var threshold = 100000;
+    var max_i = 1000;
+    var threshold = 100;
     var x = 0;
     var y = 0;
     
     for (var i = 0; i < max_i; i++) {
-        x += x0;
-        y += y0;
-        if (mag(x, y) > threshold) {
+        var xsq = x * x;
+        var ysq = y * y;
+        if (xsq + ysq > threshold) {
             return i;
         }
-        var new_x = x * x - y * y;
-        var y = 2 * x * y;
-        var x = new_x;
+        var new_x = xsq - ysq + x0;
+        y = 2 * x * y + y0;
+        x = new_x;
     }
     return -1;
 }
