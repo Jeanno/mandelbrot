@@ -5,8 +5,8 @@ function mag(x, y) {
 
 function f(x0, y0) {
     // TODO: use high precision calculation
-    var max_i = 400;
-    var threshold = 100000000;
+    var max_i = 800;
+    var threshold = 100000;
     var x = 0;
     var y = 0;
     
@@ -30,10 +30,12 @@ class MandelbrotCanvas {
         this.ctx = this.canvas.getContext("2d");
         this.left = -2;
         this.top = 1;
-        this.scale = 1;
+        this.scale = 0.5;
         this.step = 2 / this.canvas.height * this.scale;
 
         this.ctx.scale(this.scale, this.scale);
+
+        this._timeout = null;
 
         var that = this;
         this.canvas.addEventListener('click', function(e) {
@@ -48,36 +50,55 @@ class MandelbrotCanvas {
         this.step /= 1.5;
 
         this.drawSet();
-
-
         console.log(e);
     }
 
 
     drawSet() {
+        if (this._timeout) {
+            clearTimeout(this._timeout);
+        }
         var width = this.canvas.width / this.scale;
         var height = this.canvas.height / this.scale;
         this.ctx.fillStyle = "#010038";
         this.ctx.fillRect(0, 0, width, height);
+        this.drawRows(0, height);
+        console.log(height);
+    }
 
+    drawRows(start, end) {
+        var width = this.canvas.width / this.scale;
+        var j = start;
         for (var i = 0; i < width / this.scale; i++) {
-            for (var j = 0; j < height / this.scale; j++) {
-                var x = this.left + i * this.step;
-                var y = this.top - j * this.step;
-                var iter = f(x, y);
-                if (iter === -1) {
-                    this.draw(i, j);
-                } else if (iter > 70) {
-                    this.drawOuter1(i, j);
-                } else if (iter > 50) {
-                    this.drawOuter2(i, j);
-                } else if (iter > 30) {
-                    this.drawOuter3(i, j);
-                }
-
-                // Adjust brightness according to iter
+            var x = this.left + i * this.step;
+            var y = this.top - j * this.step;
+            var iter = f(x, y);
+            if (iter === -1) {
+                this.draw(i, j);
+            } else if (iter > 70) {
+                this.drawOuter1(i, j);
+            } else if (iter > 50) {
+                this.drawOuter2(i, j);
+            } else if (iter > 30) {
+                this.drawOuter3(i, j);
             }
         }
+
+        var nextRow = null;
+        if (start + 2 >= end) {
+            if ((start % 2) === 1) {
+                return;
+            } else {
+                nextRow = 1;
+            }
+        } else {
+            nextRow = start + 2;
+        }
+
+        var that = this;
+        this._timeout = setTimeout(function() {
+            that.drawRows(nextRow, end);
+        }, 1);
     }
 
     drawOuter3(x, y) {
