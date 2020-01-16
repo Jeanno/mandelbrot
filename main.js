@@ -54,7 +54,6 @@ class MandelbrotCanvas {
         this.step /= scale;
 
         this.drawSet();
-        console.log(e);
     }
 
 
