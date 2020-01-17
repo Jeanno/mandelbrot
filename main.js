@@ -57,10 +57,8 @@ class MandelbrotCanvas {
         this.ctx = this.canvas.getContext("2d", { alpha: false });
         this.left = -2.8;
         this.top = 1.2;
-        this.scale = 1;
-        this.step = 2.4 / this.canvas.height * this.scale;
+        this.step = 2.4 / this.canvas.height;
 
-        this.ctx.scale(this.scale, this.scale);
 
         this._timeout = null;
         this._escapeTimeFunc = AsmJsEscapeTime().cal;
@@ -89,17 +87,17 @@ class MandelbrotCanvas {
         if (this._timeout) {
             clearTimeout(this._timeout);
         }
-        var width = this.canvas.width / this.scale;
-        var height = this.canvas.height / this.scale;
+        var width = this.canvas.width;
+        var height = this.canvas.height;
         this.ctx.fillStyle = "#010038";
         this.ctx.fillRect(0, 0, width, height);
         this.drawRows(0, height);
     }
 
     drawRows(start, end) {
-        var width = this.canvas.width / this.scale;
+        var width = this.canvas.width;
         var j = start;
-        for (var i = 0; i < width / this.scale; i++) {
+        for (var i = 0; i < width; i++) {
             var x = this.left + i * this.step;
             var y = this.top - j * this.step;
             var iter = this._escapeTimeFunc(x, y);
