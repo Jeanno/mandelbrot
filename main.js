@@ -4,32 +4,62 @@ function mag(x, y) {
 }
 
 
-
-var MAX_ITERATION = 1000;
-function f(x0, y0) {
-    // TODO: use high precision calculation
-    var threshold = 100;
-    var x = 0;
-    var y = 0;
-    
-    for (var i = 0; i < MAX_ITERATION; i++) {
-        var xsq = x * x;
-        var ysq = y * y;
-        if (xsq + ysq > threshold) {
-            return i;
+class StandardEscapeTime {
+    static cal(x0, y0) {
+        var MAX_ITERATION = 1000;
+        var threshold = 4.0;
+        var x = 0;
+        var y = 0;
+        for (var i = 0; i < MAX_ITERATION; i++) {
+            var xsq = x * x;
+            var ysq = y * y;
+            if (xsq + ysq > threshold) {
+                return i;
+            }
+            var new_x = xsq - ysq + x0;
+            y = 2 * x * y + y0;
+            x = new_x;
         }
-        var new_x = xsq - ysq + x0;
-        y = 2 * x * y + y0;
-        x = new_x;
+        return -1;
     }
-    return -1;
 }
+
+function AsmJsEscapeTime(stdlib, foreign, buffer) {
+    "use asm";
+
+    function cal(x0, y0) {
+        x0 = +x0;
+        y0 = +y0;
+        var MAX_ITERATION = 1000;
+        var threshold = 4.0;
+        var x = 0.0;
+        var y = 0.0;
+        var i = 0;
+        var xsq = 0.0;
+        var ysq = 0.0;
+        var new_x = 0.0;
+        for (i = 0; (i|0) < (MAX_ITERATION|0); i = (i + 1)|0) {
+            xsq = +(x * x);
+            ysq = +(y * y);
+            if (+(xsq + ysq) > +(threshold)) {
+                return i|0;
+            }
+            new_x = +(xsq - ysq + x0);
+            y = +(2.0 * x * y + y0);
+            x = +new_x;
+        }
+        return -1|0;
+    }
+
+    return { cal : cal };
+}
+
 
 class MandelbrotCanvas {
     constructor(canvasId) {
         this.canvasId = canvasId;
         this.canvas = document.getElementById(canvasId);
-        this.ctx = this.canvas.getContext("2d");
+        this.ctx = this.canvas.getContext("2d", { alpha: false });
         this.left = -2.8;
         this.top = 1.2;
         this.scale = 1;
@@ -38,6 +68,8 @@ class MandelbrotCanvas {
         this.ctx.scale(this.scale, this.scale);
 
         this._timeout = null;
+        this._escapeTimeFunc = AsmJsEscapeTime().cal;
+        //this._escapeTimeFunc = StandardEscapeTime.cal;
 
         var that = this;
         this.canvas.addEventListener('click', function(e) {
@@ -58,6 +90,7 @@ class MandelbrotCanvas {
 
 
     drawSet() {
+        console.time("draw");
         if (this._timeout) {
             clearTimeout(this._timeout);
         }
@@ -74,7 +107,7 @@ class MandelbrotCanvas {
         for (var i = 0; i < width / this.scale; i++) {
             var x = this.left + i * this.step;
             var y = this.top - j * this.step;
-            var iter = f(x, y);
+            var iter = this._escapeTimeFunc(x, y);
             if (iter === -1) {
                 this.draw(i, j);
             } else {
@@ -90,9 +123,10 @@ class MandelbrotCanvas {
             }
         }
 
-        var nextRow = null;
+        var nextRow = 0;
         if (start + 2 >= end) {
             if ((start % 2) === 1) {
+                console.timeEnd("draw");
                 return;
             } else {
                 nextRow = 1;
@@ -101,10 +135,14 @@ class MandelbrotCanvas {
             nextRow = start + 2;
         }
 
-        var that = this;
-        this._timeout = setTimeout(function() {
-            that.drawRows(nextRow, end);
-        }, 1);
+        if (nextRow % 3 === 0) {
+            var that = this;
+            this._timeout = setTimeout(function() {
+                that.drawRows(nextRow, end);
+            }, 0);
+        } else {
+            this.drawRows(nextRow, end);
+        }
     }
 
     draw(x, y) {
@@ -115,5 +153,15 @@ class MandelbrotCanvas {
 }
 
 
+function testEscapeTime() {
+    console.time("asm");
+    AsmJsEscapeTime().cal(0.0);
+    console.timeEnd("asm");
+    console.time("std");
+    StandardEscapeTime.cal(0,0);
+    console.timeEnd("std");
+}
+
+testEscapeTime()
 var mc = new MandelbrotCanvas("my-canvas");
 mc.drawSet();
