@@ -32,7 +32,6 @@ class StepDrawer {
     }
 
     drawSet() {
-        console.log("max iterm: " + this._maxIter);
         var mc = this._mandelbrotCanvas;
         console.time("draw");
         if (this._timeout) {
@@ -88,6 +87,7 @@ class StepDrawer {
             }, 0);
         } else {
             console.timeEnd("draw");
+            console.log("max iter: " + this._maxIter);
         }
 
     }
