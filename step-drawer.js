@@ -4,7 +4,7 @@ class StepDrawer {
         this._timeout = null;
         var canvas = this._mandelbrotCanvas.canvas;
 
-        this._maxIter = 100;
+        this._maxIter = 500;
         this._zs = new Array(canvas.height * canvas.width);
         this.initZ();
 
@@ -57,9 +57,10 @@ class StepDrawer {
         var left = mc.left;
         var step = mc.step;
         var threshold = 4.0;
-        var canvas = this._mandelbrotCanvas.canvas;
         for (var j = 0; j < mc.canvas.height; j++) {
             var y0 = top - j * step;
+            var fillFrom = 0;
+
             for (var i = 0; i < mc.canvas.width; i++) {
                 var z = this.getZ(i, j);
                 for (var k = 0; k < multi; k++) {
@@ -72,7 +73,7 @@ class StepDrawer {
                     if (xsq + ysq > threshold) {
                         z[2] = true;
                         this.drawPx(i, j, iter + k);
-                        this._maxIter = Math.max(this._maxIter, (iter * 1.04)|0);
+                        this._maxIter = Math.max(this._maxIter, ((iter + k) * 1.05)|0);
                     }
                     z[1] = 2 * z[0] * z[1] + y0;
                     z[0] = xsq - ysq + x0;
@@ -80,7 +81,7 @@ class StepDrawer {
             }
         }
 
-        if (iter < this._maxIter) {
+        if (iter + multi < this._maxIter) {
             var that = this;
             this._timeout = setTimeout(function() {
                 that.drawStep(iter + multi);

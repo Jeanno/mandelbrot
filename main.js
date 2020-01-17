@@ -72,7 +72,7 @@ class MandelbrotCanvas {
     }
 
     onClick(e) {
-        var scale = 1.5;
+        var scale = 2.0;
         // Reposition center to click
         //
         this.left += (e.offsetX - this.canvas.width / 2 / scale) * this.step;
