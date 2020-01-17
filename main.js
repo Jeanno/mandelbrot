@@ -92,13 +92,16 @@ class MandelbrotCanvas {
 
 function testEscapeTime() {
     console.time("asm");
-    AsmJsEscapeTime().cal(0,0);
+    for (var i = 0; i < 100; i++) {
+        AsmJsEscapeTime().cal(0,0);
+    }
     console.timeEnd("asm");
     console.time("std");
-    StandardEscapeTime.cal(0,0);
+    for (var i = 0; i < 100; i++) {
+        StandardEscapeTime.cal(0,0);
+    }
     console.timeEnd("std");
 }
 
-testEscapeTime()
 var mc = new MandelbrotCanvas("my-canvas");
 mc.drawSet();
