@@ -1,9 +1,4 @@
 
-function mag(x, y) {
-    return x*x + y*y;
-}
-
-
 class StandardEscapeTime {
     static cal(x0, y0) {
         var MAX_ITERATION = 1000;
@@ -135,7 +130,7 @@ class MandelbrotCanvas {
             nextRow = start + 2;
         }
 
-        if (nextRow % 3 === 0) {
+        if (nextRow % 7 === 0) {
             var that = this;
             this._timeout = setTimeout(function() {
                 that.drawRows(nextRow, end);
