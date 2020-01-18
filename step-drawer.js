@@ -102,9 +102,7 @@ class StepDrawer {
     }
 
     getColorForStep(step) {
-        if (step === -1) {
-            return "#000";
-        } else {
+        if (step !== -1) {
             var ret = this._colorCache[step];
             if (!ret) {
                 var denominator = 1000;
@@ -117,12 +115,18 @@ class StepDrawer {
                 ret = this._colorCache[step] = 'hsl(' + h + ',' + s + '%,' + l + '%)';
             }
             return ret;
+        } else {
+            return "#000";
         }
     }
 
     drawPx(x, y, step) {
         var ctx = this._mandelbrotCanvas.ctx;
-        ctx.fillStyle = this.getColorForStep(step);
+        if (this._lastStep !== step) {
+            var color = this.getColorForStep(step);
+            ctx.fillStyle = color;
+            this._lastStep = step;
+        }
         ctx.fillRect(x, y, 1, 1);
     }
 }

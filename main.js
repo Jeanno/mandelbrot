@@ -103,5 +103,7 @@ function testEscapeTime() {
     console.timeEnd("std");
 }
 
-var mc = new MandelbrotCanvas("my-canvas");
-mc.drawSet();
+window.onload = function() {
+    var mc = new MandelbrotCanvas("my-canvas");
+    mc.drawSet();
+};
