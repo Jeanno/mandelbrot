@@ -1,11 +1,16 @@
 # What is this?
 Just an HTML5 Mandelbrot set viewer.
+https://jeanno.github.io/mandelbrot/
 
 # Author
 Jeanno
+https://jeanno.github.io/
+
+
+# Lastest Update
+- Animation style drawing - from process all pixels iteration by iteration.
+- Auto determine max iterations
 
 # Backlog
-- Animation style drawing - from process all pixels iteration by iteration.
 - Use workers for multiprocess
-- Auto determine max iterations
 - More navigation controls
