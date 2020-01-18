@@ -62,7 +62,7 @@ class MandelbrotCanvas {
 
 
         this._drawer = new StepDrawer(this);
-        this._escapeTimeFunc = AsmJsEscapeTime().cal;
+        //this._escapeTimeFunc = AsmJsEscapeTime().cal;
         //this._escapeTimeFunc = StandardEscapeTime.cal;
 
         var that = this;
